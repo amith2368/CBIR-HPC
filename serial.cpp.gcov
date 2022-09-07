@@ -1,0 +1,821 @@
+        -:    0:Source:serial.cpp
+        -:    0:Graph:serial.gcno
+        -:    0:Data:serial.gcda
+        -:    0:Runs:3
+        -:    1:#include <unistd.h>
+        -:    2:#include <stdio.h>
+        -:    3:#include <string.h>
+        -:    4:#include <math.h>
+        -:    5:#include <stdlib.h>
+        -:    6:#include <time.h>
+        -:    7:#include <iostream>
+        -:    8:using namespace std;
+        -:    9:
+        -:   10:typedef struct
+        -:   11:{
+        -:   12:   unsigned int width;
+        -:   13:   unsigned int height;
+        -:   14:   unsigned int planes;
+        -:   15:   unsigned short bitcount;
+        -:   16:   unsigned int size;
+        -:   17:} BITMAPINFOHEADER;
+        -:   18:
+        -:   19:typedef struct
+        -:   20:{
+        -:   21:   unsigned char blue;
+        -:   22:   unsigned char green;
+        -:   23:   unsigned char red;
+        -:   24:}PIXEL;
+        -:   25:
+        -:   26:int grey[1000000];
+        -:   27:int maxe=0;
+        -:   28:
+function _Z7extractv called 6 returned 100% blocks executed 100%
+        6:   29:void extract()
+        -:   30:{
+        -:   31:	FILE *image;
+        -:   32:    BITMAPINFOHEADER bih;
+        6:   33:    int i=0,b[8],g[8],r[8];
+        -:   34:    char path[100];
+        6:   35:	char fpath[] = "";
+        6:   36:    cout<<"Enter Name of the File:";
+        6:   37:    cin>>path;
+call    0 returned 6
+branch  1 taken 6 (fallthrough)
+branch  2 taken 0 (throw)
+        6:   38:    strcat(fpath,path);
+        6:   39:    strcat(fpath,".bmp");
+        6:   40:    image=fopen(fpath,"rb");
+call    0 returned 6
+branch  1 taken 6 (fallthrough)
+branch  2 taken 0 (throw)
+        -:   41:
+        6:   42:    fseek(image,2,SEEK_SET);
+call    0 returned 6
+        6:   43:    fread(&bih.size,4,1,image);
+call    0 returned 6
+branch  1 taken 6 (fallthrough)
+branch  2 taken 0 (throw)
+        6:   44:    fseek(image,18,SEEK_SET);
+call    0 returned 6
+        6:   45:    fread(&bih.width,4,1,image);
+call    0 returned 6
+branch  1 taken 6 (fallthrough)
+branch  2 taken 0 (throw)
+        6:   46:    fseek(image,22,SEEK_SET);
+call    0 returned 6
+        6:   47:    fread(&bih.height,4,1,image);
+call    0 returned 6
+branch  1 taken 6 (fallthrough)
+branch  2 taken 0 (throw)
+        6:   48:    fseek(image,26,SEEK_SET);
+call    0 returned 6
+        6:   49:    fread(&bih.planes,2,1,image);
+call    0 returned 6
+branch  1 taken 6 (fallthrough)
+branch  2 taken 0 (throw)
+        6:   50:    fseek(image,28,SEEK_SET);
+call    0 returned 6
+        6:   51:    fread(&bih.bitcount,2,1,image);
+call    0 returned 6
+branch  1 taken 6 (fallthrough)
+branch  2 taken 0 (throw)
+        6:   52:    PIXEL pic[bih.width*bih.height*2],p;
+        6:   53:    fseek(image,54,SEEK_SET);
+call    0 returned 6
+        -:   54:
+        6:   55:    int sum=0;
+        6:   56:    maxe=0;
+   178972:   57:    for(i=0;i<bih.width*bih.height;i++)
+branch  0 taken 178966 (fallthrough)
+branch  1 taken 6
+        -:   58:    {
+   178966:   59:        fread(&p.blue,sizeof(p.blue),1,image);
+call    0 returned 178966
+branch  1 taken 178966 (fallthrough)
+branch  2 taken 0 (throw)
+   178966:   60:        fread(&p.green,sizeof(p.green),1,image);
+call    0 returned 178966
+branch  1 taken 178966 (fallthrough)
+branch  2 taken 0 (throw)
+   178966:   61:        fread(&p.red,sizeof(p.red),1,image);
+call    0 returned 178966
+branch  1 taken 178966 (fallthrough)
+branch  2 taken 0 (throw)
+   178966:   62:        pic[i]=p;
+   178966:   63:        sum=((pic[i].red + pic[i].green + pic[i].blue)/3);
+   178966:   64:        grey[i]=sum;
+        -:   65:    }
+        6:   66:    maxe=i;
+       12:   67:    fclose(image);
+call    0 returned 6
+branch  1 taken 6 (fallthrough)
+branch  2 taken 0 (throw)
+call    3 returned 6
+branch  4 taken 6 (fallthrough)
+branch  5 taken 0 (throw)
+        6:   68:}
+        -:   69:
+        -:   70:int hb[256];
+function _Z9histogramv called 0 returned 0% blocks executed 0%
+    #####:   71:void histogram()
+        -:   72:{
+    #####:   73:	for(int x=0;x<=255;x++)
+branch  0 never executed
+branch  1 never executed
+        -:   74:	{
+    #####:   75:		hb[x]=0;
+        -:   76:	}
+    #####:   77:	for(int i=0;i<maxe;i++)
+branch  0 never executed
+branch  1 never executed
+        -:   78:	{
+    #####:   79:		for(int j=0;j<=255;j++)
+branch  0 never executed
+branch  1 never executed
+        -:   80:		{
+    #####:   81:			if(grey[i]==j)
+branch  0 never executed
+branch  1 never executed
+        -:   82:			{
+    #####:   83:				hb[j]++;
+    #####:   84:				break;
+        -:   85:			}
+        -:   86:		}
+        -:   87:    }
+    #####:   88:}
+        -:   89:
+function _Z13display_histov called 0 returned 0% blocks executed 0%
+    #####:   90:void display_histo()
+        -:   91:{
+    #####:   92:	for(int i=0;i<256;i++)
+branch  0 never executed
+branch  1 never executed
+        -:   93:	{
+    #####:   94:		cout<<i<<" intensity : ";
+call    0 never executed
+call    1 never executed
+    #####:   95:		for(int j=0;j<(hb[i]/40);j++)
+branch  0 never executed
+branch  1 never executed
+        -:   96:		{
+    #####:   97:			cout<<"|";
+call    0 never executed
+        -:   98:		}
+    #####:   99:		cout<<endl;
+call    0 never executed
+        -:  100:	}
+    #####:  101:}
+        -:  102:
+function _Z15cal_1degreemeanPi called 6 returned 100% blocks executed 100%
+        6:  103:double cal_1degreemean(int ar[])
+        -:  104:{
+        6:  105:	double tsum=0;
+        6:  106:	double tinten=0;
+        -:  107:	double mean;
+   178972:  108:	for(int i=0;i<maxe;i++)
+branch  0 taken 178966 (fallthrough)
+branch  1 taken 6
+        -:  109:	{
+   178966:  110:		double x = grey[i];
+   178966:  111:		tsum=tsum+x;
+   178966:  112:		tinten=tinten+(i+1);
+        -:  113:	}
+        6:  114:	mean=(tsum/(maxe-1));
+        6:  115:	return mean;
+        -:  116:}
+        -:  117:
+function _Z20cal_1degreeDeviationPid called 6 returned 100% blocks executed 100%
+        6:  118:double cal_1degreeDeviation(int ar[],double m)
+        -:  119:{
+        6:  120:	double tdiff=0;
+        6:  121:	double tsq=0;
+        6:  122:	double tsqsum=0;
+        6:  123:	double tinten=0;
+        6:  124:	double tsqrt=0;
+        6:  125:	double var=0;
+        -:  126:
+   178972:  127:	for(int i=0;i<maxe;i++)
+branch  0 taken 178966 (fallthrough)
+branch  1 taken 6
+        -:  128:	{
+   178966:  129:		double x = ar[i];
+   178966:  130:		tdiff=(x-m);
+   178966:  131:		tsq=tdiff*tdiff;
+   178966:  132:		tsqsum=tsqsum+tsq;
+   178966:  133:		tinten=tinten+(i+1);
+        -:  134:	}
+        6:  135:	var=(tsqsum/(maxe-1));
+        6:  136:	tsqrt=sqrt(var);
+        6:  137:	return tsqrt;
+        -:  138:}
+        -:  139:
+        -:  140:struct HASH
+        -:  141:{
+        -:  142:	int key[10];
+        -:  143:	char text[100];
+        -:  144:}HASH;
+        -:  145:
+        -:  146:struct HASH hashtable[10000];
+        -:  147:int checktable[10000]={0};
+        -:  148:int t;
+        -:  149:
+function _Z12hashfunctioni called 0 returned 0% blocks executed 0%
+    #####:  150:int hashfunction(int key)
+        -:  151:{
+    #####:  152:		int tindex=0;
+    #####:  153:		int dcube=0,dsqr=0,tind=0;
+    #####:  154:		while(key!=0)
+branch  0 never executed
+branch  1 never executed
+        -:  155:		{
+    #####:  156:			dcube=((key%10)*(key%10)*(key%10));
+    #####:  157:			tind=tind+dcube;
+    #####:  158:			key=key/10;
+        -:  159:		}
+    #####:  160:		while(tind!=0)
+branch  0 never executed
+branch  1 never executed
+        -:  161:		{
+    #####:  162:			dsqr=((tind%10)*(tind%10));
+    #####:  163:			tindex=tindex+dsqr;
+    #####:  164:			tind=tind/10;
+    #####:  165:			dsqr=((tind%10)*(tind%10)*(tind%10));
+    #####:  166:			tindex=tindex+dsqr;
+    #####:  167:			tind=tind/10;
+        -:  168:		}
+    #####:  169:		return tindex;
+        -:  170:}
+        -:  171:
+function _Z16hashtable_inserti called 0 returned 0% blocks executed 0%
+    #####:  172:void hashtable_insert(int x)
+        -:  173:{
+    #####:  174:	int index=0;
+        -:  175:	char name[100];
+        -:  176:	
+        -:  177:	
+        -:  178:
+    #####:  179:	index=hashfunction(x);
+call    0 never executed
+    #####:  180:	if(checktable[index]==0)
+branch  0 never executed
+branch  1 never executed
+        -:  181:	{
+    #####:  182:		hashtable[index].key[1]=x;
+    #####:  183:		cout<<"Enter the name of the user : ";
+call    0 never executed
+branch  1 never executed
+branch  2 never executed
+    #####:  184:		cin>>name;
+call    0 never executed
+branch  1 never executed
+branch  2 never executed
+    #####:  185:		int l=strlen(name);
+    #####:  186:		for(int j=0;j<l;j++)
+branch  0 never executed
+branch  1 never executed
+        -:  187:		{
+    #####:  188:			hashtable[index].text[j]=name[j];
+        -:  189:		}
+    #####:  190:		checktable[index]=1;
+        -:  191:	}
+    #####:  192:	else if(checktable[index]==1)
+branch  0 never executed
+branch  1 never executed
+        -:  193:	{
+    #####:  194:		index=index+1;
+    #####:  195:		hashtable[index].key[1]=x;
+    #####:  196:		cin>>name;
+call    0 never executed
+branch  1 never executed
+branch  2 never executed
+    #####:  197:		int l=strlen(name);
+    #####:  198:		for(int j=0;j<l;j++)
+branch  0 never executed
+branch  1 never executed
+        -:  199:		{
+    #####:  200:			hashtable[index].text[j]=name[j];
+        -:  201:		}
+    #####:  202:		checktable[index]=1;
+        -:  203:	}
+    #####:  204:}
+        -:  205:
+function _Z16hashtable_searchi called 0 returned 0% blocks executed 0%
+    #####:  206:int hashtable_search(int key)
+        -:  207:{
+    #####:  208:	 int searchind=hashfunction(key);
+call    0 never executed
+        -:  209:
+    #####:  210:	 if(hashtable[searchind].key[1]==key)
+branch  0 never executed
+branch  1 never executed
+        -:  211:	 {
+    #####:  212:		 return searchind;
+        -:  213:	 }
+    #####:  214:	 else if(hashtable[searchind].key[1]!=key)
+branch  0 never executed
+branch  1 never executed
+        -:  215:	 {
+    #####:  216:		 for(int i=searchind;i<10000;i++)
+branch  0 never executed
+branch  1 never executed
+        -:  217:		 {
+    #####:  218:			 if(hashtable[i].key[1]==key)
+branch  0 never executed
+branch  1 never executed
+        -:  219:			 {
+    #####:  220:				 return i;
+        -:  221:				 break;
+        -:  222:		     }
+        -:  223:		     else
+        -:  224:		     {
+    #####:  225:				 continue;
+        -:  226:			 }
+        -:  227:		 }
+        -:  228:	 }
+    #####:  229:}
+        -:  230:
+        -:  231:
+        -:  232:
+function main called 3 returned 100% blocks executed 67%
+        3:  233:int main()
+        -:  234:{
+        3:  235:	int choice=0;
+        3:  236:	int choice1=0,choice2=0,choice3=0;
+        3:  237:	int ascode=0,top=0;
+        3:  238:	double remean[1000]={0};
+        3:  239:	double resd[1000]={0};
+        3:  240:	double distvect[1000]={0};
+        3:  241:	double distvects[1000]={0};
+        1:  242:	do
+        -:  243:    {
+        4:  244:		cout<<endl<<" ********************************************";
+call    0 returned 4
+branch  1 taken 4 (fallthrough)
+branch  2 taken 0 (throw)
+call    3 returned 4
+branch  4 taken 4 (fallthrough)
+branch  5 taken 0 (throw)
+        4:  245:		cout<<endl<<"|  1.IMAGE ANALYSIS                          |"<<endl;
+call    0 returned 4
+branch  1 taken 4 (fallthrough)
+branch  2 taken 0 (throw)
+call    3 returned 4
+branch  4 taken 4 (fallthrough)
+branch  5 taken 0 (throw)
+call    6 returned 4
+branch  7 taken 4 (fallthrough)
+branch  8 taken 0 (throw)
+        4:  246:		cout<<"|  2.RETRIVE SIMILAR IMAGES FROM DATABASE    |"<<endl;
+call    0 returned 4
+branch  1 taken 4 (fallthrough)
+branch  2 taken 0 (throw)
+call    3 returned 4
+branch  4 taken 4 (fallthrough)
+branch  5 taken 0 (throw)
+        4:  247:		cout<<"|  3.FINGERPRINT VERIFICATION                |"<<endl;
+call    0 returned 4
+branch  1 taken 4 (fallthrough)
+branch  2 taken 0 (throw)
+call    3 returned 4
+branch  4 taken 4 (fallthrough)
+branch  5 taken 0 (throw)
+        4:  248:		cout<<"|  4.EXIT                     |"<<endl;
+call    0 returned 4
+branch  1 taken 4 (fallthrough)
+branch  2 taken 0 (throw)
+call    3 returned 4
+branch  4 taken 4 (fallthrough)
+branch  5 taken 0 (throw)
+        4:  249:		cout<<" ********************************************"<<endl<<endl;
+call    0 returned 4
+branch  1 taken 4 (fallthrough)
+branch  2 taken 0 (throw)
+call    3 returned 4
+branch  4 taken 4 (fallthrough)
+branch  5 taken 0 (throw)
+call    6 returned 4
+branch  7 taken 4 (fallthrough)
+branch  8 taken 0 (throw)
+        4:  250:		cout<<"*********************************************"<<endl;
+call    0 returned 4
+branch  1 taken 4 (fallthrough)
+branch  2 taken 0 (throw)
+call    3 returned 4
+branch  4 taken 4 (fallthrough)
+branch  5 taken 0 (throw)
+        4:  251:		cout<<"Enter your choice : ";
+call    0 returned 4
+branch  1 taken 4 (fallthrough)
+branch  2 taken 0 (throw)
+        4:  252:		cin>>choice;
+call    0 returned 4
+branch  1 taken 4 (fallthrough)
+branch  2 taken 0 (throw)
+        -:  253:
+        4:  254:		if(choice==1)
+branch  0 taken 0 (fallthrough)
+branch  1 taken 4
+        -:  255:		{
+    #####:  256:			extract();
+call    0 never executed
+branch  1 never executed
+branch  2 never executed
+    #####:  257:			histogram();
+call    0 never executed
+    #####:  258:			cout<<endl<<endl<<"HISTOGRAM FOR THE INPUT IMAGE"<<endl;
+call    0 never executed
+branch  1 never executed
+branch  2 never executed
+call    3 never executed
+branch  4 never executed
+branch  5 never executed
+call    6 never executed
+branch  7 never executed
+branch  8 never executed
+call    9 never executed
+branch 10 never executed
+branch 11 never executed
+    #####:  259:			display_histo();
+call    0 never executed
+branch  1 never executed
+branch  2 never executed
+    #####:  260:			double br = cal_1degreemean(grey);
+call    0 never executed
+    #####:  261:			double con = cal_1degreeDeviation(grey,br);
+call    0 never executed
+    #####:  262:			cout<<"\nOVERALL BRIGHTNESS OF THE IMAGE : "<<br<<endl<<endl;
+call    0 never executed
+branch  1 never executed
+branch  2 never executed
+call    3 never executed
+branch  4 never executed
+branch  5 never executed
+call    6 never executed
+branch  7 never executed
+branch  8 never executed
+call    9 never executed
+branch 10 never executed
+branch 11 never executed
+    #####:  263:			cout<<"OVERALL CONTRAST OF THE IMAGE : "<<con<<endl<<endl;
+call    0 never executed
+branch  1 never executed
+branch  2 never executed
+call    3 never executed
+branch  4 never executed
+branch  5 never executed
+call    6 never executed
+branch  7 never executed
+branch  8 never executed
+call    9 never executed
+branch 10 never executed
+branch 11 never executed
+        -:  264:	    }
+        -:  265:	    
+        -:  266:	    
+        -:  267:	    
+        -:  268:	    
+        -:  269:	    
+        4:  270:	    else if(choice==2)
+branch  0 taken 1 (fallthrough)
+branch  1 taken 3
+        -:  271:		{
+        6:  272:			do
+        -:  273:			{
+        7:  274:				cout<<endl<<"1.UPLOAD IMAGES INTO DATABASE";
+call    0 returned 7
+branch  1 taken 7 (fallthrough)
+branch  2 taken 0 (throw)
+call    3 returned 7
+branch  4 taken 7 (fallthrough)
+branch  5 taken 0 (throw)
+        7:  275:				cout<<endl<<"2.RETRIEVE SIMILAR IMAGES FROM THE UPLOADED IMAGES";
+call    0 returned 7
+branch  1 taken 7 (fallthrough)
+branch  2 taken 0 (throw)
+call    3 returned 7
+branch  4 taken 7 (fallthrough)
+branch  5 taken 0 (throw)
+        7:  276:				cout<<endl<<"3.BACK INTO PREVIOUS MENU"<<endl;
+call    0 returned 7
+branch  1 taken 7 (fallthrough)
+branch  2 taken 0 (throw)
+call    3 returned 7
+branch  4 taken 7 (fallthrough)
+branch  5 taken 0 (throw)
+call    6 returned 7
+branch  7 taken 7 (fallthrough)
+branch  8 taken 0 (throw)
+        7:  277:				cout<<endl<<"Enter you choice : ";
+call    0 returned 7
+branch  1 taken 7 (fallthrough)
+branch  2 taken 0 (throw)
+call    3 returned 7
+branch  4 taken 7 (fallthrough)
+branch  5 taken 0 (throw)
+        7:  278:				cin>>choice3;
+call    0 returned 7
+branch  1 taken 7 (fallthrough)
+branch  2 taken 0 (throw)
+        7:  279:				if(choice3==1)
+branch  0 taken 5 (fallthrough)
+branch  1 taken 2
+        -:  280:				{
+        5:  281:					cout<<endl<<endl<<"Enter the file to be uploaded"<<endl;
+call    0 returned 5
+branch  1 taken 5 (fallthrough)
+branch  2 taken 0 (throw)
+call    3 returned 5
+branch  4 taken 5 (fallthrough)
+branch  5 taken 0 (throw)
+call    6 returned 5
+branch  7 taken 5 (fallthrough)
+branch  8 taken 0 (throw)
+call    9 returned 5
+branch 10 taken 5 (fallthrough)
+branch 11 taken 0 (throw)
+        5:  282:					extract();
+call    0 returned 5
+branch  1 taken 5 (fallthrough)
+branch  2 taken 0 (throw)
+        5:  283:					double b3=cal_1degreemean(grey);
+call    0 returned 5
+        5:  284:					double c3=cal_1degreeDeviation(grey,b3);
+call    0 returned 5
+        5:  285:					top=top+1;
+        5:  286:					remean[top]=b3;
+        5:  287:					resd[top]=c3;
+        5:  288:					if(b3&&c3>0)
+branch  0 taken 5 (fallthrough)
+branch  1 taken 0
+branch  2 taken 5 (fallthrough)
+branch  3 taken 0
+        -:  289:					{
+        5:  290:						cout<<endl<<"Successfully Uploaded !!"<<endl;
+call    0 returned 5
+branch  1 taken 5 (fallthrough)
+branch  2 taken 0 (throw)
+call    3 returned 5
+branch  4 taken 5 (fallthrough)
+branch  5 taken 0 (throw)
+call    6 returned 5
+branch  7 taken 5 (fallthrough)
+branch  8 taken 0 (throw)
+        -:  291:					}
+        -:  292:					else
+        -:  293:					{
+    #####:  294:						cout<<endl<<"File Not Found !!"<<endl;
+call    0 never executed
+branch  1 never executed
+branch  2 never executed
+call    3 never executed
+branch  4 never executed
+branch  5 never executed
+call    6 never executed
+branch  7 never executed
+branch  8 never executed
+        -:  295:					}
+        -:  296:				}
+        2:  297:				else if(choice3==2)
+branch  0 taken 1 (fallthrough)
+branch  1 taken 1
+        -:  298:				{
+        1:  299:					cout<<endl<<"Enter the file for which similar images have to be retrived"<<endl;
+call    0 returned 1
+branch  1 taken 1 (fallthrough)
+branch  2 taken 0 (throw)
+call    3 returned 1
+branch  4 taken 1 (fallthrough)
+branch  5 taken 0 (throw)
+call    6 returned 1
+branch  7 taken 1 (fallthrough)
+branch  8 taken 0 (throw)
+        1:  300:					extract();
+call    0 returned 1
+branch  1 taken 1 (fallthrough)
+branch  2 taken 0 (throw)
+        1:  301:					double b4=cal_1degreemean(grey);
+call    0 returned 1
+        1:  302:					double c4=cal_1degreeDeviation(grey,b4);
+call    0 returned 1
+        6:  303:					for(int i=1;i<=top;i++)
+branch  0 taken 5 (fallthrough)
+branch  1 taken 1
+        -:  304:					{
+        5:  305:						distvect[i]=((b4-remean[i])+(c4-resd[i]));
+        5:  306:						distvects[i]=((b4-remean[i])+(c4-resd[i]));
+        5:  307:						if(distvect[i]<0)
+branch  0 taken 4 (fallthrough)
+branch  1 taken 1
+        -:  308:						{
+        4:  309:							distvect[i] = -distvect[i];
+        4:  310:							distvects[i] = -distvects[i];
+        -:  311:						}
+        -:  312:					}
+        5:  313:					for(int x=1;x<top;x++)
+branch  0 taken 4 (fallthrough)
+branch  1 taken 1
+        -:  314:					{
+       20:  315:						for(int y=1;y<top;y++)
+branch  0 taken 16 (fallthrough)
+branch  1 taken 4
+        -:  316:						{
+       16:  317:							double temp=0;
+       16:  318:							if(distvects[y]>distvects[y+1])
+branch  0 taken 5 (fallthrough)
+branch  1 taken 11
+        -:  319:							{
+        5:  320:								temp=distvects[y];
+        5:  321:								distvects[y]=distvects[y+1];
+        5:  322:								distvects[y+1]=temp;
+        -:  323:							}
+        -:  324:						}
+        -:  325:					}
+        -:  326:					int inda[100];
+        1:  327:					int ii=0;
+        6:  328:					for(int i=1;i<=top;i++)
+branch  0 taken 5 (fallthrough)
+branch  1 taken 1
+        -:  329:					{
+       30:  330:						for(int j=1;j<=top;j++)
+branch  0 taken 25 (fallthrough)
+branch  1 taken 5
+        -:  331:						{
+       25:  332:							if(distvects[i]==distvect[j])
+branch  0 taken 5 (fallthrough)
+branch  1 taken 20
+        -:  333:							{
+        5:  334:								ii=ii+1;
+        5:  335:								inda[i]=j;
+        -:  336:							}
+        -:  337:						}
+        -:  338:					}
+        1:  339:					cout<<endl;
+call    0 returned 1
+branch  1 taken 1 (fallthrough)
+branch  2 taken 0 (throw)
+        1:  340:					cout<<" *********************************"<<endl;
+call    0 returned 1
+branch  1 taken 1 (fallthrough)
+branch  2 taken 0 (throw)
+call    3 returned 1
+branch  4 taken 1 (fallthrough)
+branch  5 taken 0 (throw)
+        1:  341:					cout<<"|  Indexes of similar images are"<<endl;
+call    0 returned 1
+branch  1 taken 1 (fallthrough)
+branch  2 taken 0 (throw)
+call    3 returned 1
+branch  4 taken 1 (fallthrough)
+branch  5 taken 0 (throw)
+        6:  342:					for(int i=1;i<=top;i++)
+branch  0 taken 5 (fallthrough)
+branch  1 taken 1
+        -:  343:					{
+        5:  344:						int x = inda[i];
+        5:  345:						if(100-distvect[x]<0)
+branch  0 taken 0 (fallthrough)
+branch  1 taken 5
+        -:  346:						{
+    #####:  347:							distvect[x]=100;
+        -:  348:						}
+        5:  349:						cout<<"|  "<<inda[i]<<" matched by "<<100-distvect[x]<<"%"<<endl;
+call    0 returned 5
+branch  1 taken 5 (fallthrough)
+branch  2 taken 0 (throw)
+call    3 returned 5
+branch  4 taken 5 (fallthrough)
+branch  5 taken 0 (throw)
+call    6 returned 5
+branch  7 taken 5 (fallthrough)
+branch  8 taken 0 (throw)
+call    9 returned 5
+branch 10 taken 5 (fallthrough)
+branch 11 taken 0 (throw)
+call   12 returned 5
+branch 13 taken 5 (fallthrough)
+branch 14 taken 0 (throw)
+call   15 returned 5
+branch 16 taken 5 (fallthrough)
+branch 17 taken 0 (throw)
+        -:  350:					}
+        -:  351:				}
+        -:  352:			}
+        7:  353:			while(choice3!=3);
+branch  0 taken 6 (fallthrough)
+branch  1 taken 1
+        -:  354:		}
+        -:  355:		
+        3:  356:		else if(choice==3)
+branch  0 taken 0 (fallthrough)
+branch  1 taken 3
+        -:  357:		{
+    #####:  358:			do
+        -:  359:			{
+    #####:  360:				cout<<"\n1.UPLOAD FINGERPRINT";
+call    0 never executed
+branch  1 never executed
+branch  2 never executed
+    #####:  361:				cout<<"\n2.VERIFY FINGERPRINT";
+call    0 never executed
+branch  1 never executed
+branch  2 never executed
+    #####:  362:				cout<<"\n3.BACK TO PREVIOUS MENU\n";
+call    0 never executed
+branch  1 never executed
+branch  2 never executed
+    #####:  363:				cout<<"Enter you choice : ";
+call    0 never executed
+branch  1 never executed
+branch  2 never executed
+    #####:  364:				cin>>choice2;
+call    0 never executed
+branch  1 never executed
+branch  2 never executed
+    #####:  365:				if(choice2==1)
+branch  0 never executed
+branch  1 never executed
+        -:  366:				{
+    #####:  367:						cout<<"\nEnter the file to be uploaded\n";
+call    0 never executed
+branch  1 never executed
+branch  2 never executed
+    #####:  368:						extract();
+call    0 never executed
+branch  1 never executed
+branch  2 never executed
+    #####:  369:						double br1 = cal_1degreemean(grey);
+call    0 never executed
+    #####:  370:						int br1x=br1*1000;
+    #####:  371:						hashtable_insert(br1x);
+call    0 never executed
+branch  1 never executed
+branch  2 never executed
+    #####:  372:						cout<<"\nSuccessfully Uploaded !!"<<endl;
+call    0 never executed
+branch  1 never executed
+branch  2 never executed
+call    3 never executed
+branch  4 never executed
+branch  5 never executed
+        -:  373:				}
+    #####:  374:				else if(choice2==2)
+branch  0 never executed
+branch  1 never executed
+        -:  375:				{
+    #####:  376:					cout<<"\nEnter the file to be verified\n";
+call    0 never executed
+branch  1 never executed
+branch  2 never executed
+    #####:  377:					extract();
+call    0 never executed
+branch  1 never executed
+branch  2 never executed
+    #####:  378:					double br2 = cal_1degreemean(grey);
+call    0 never executed
+    #####:  379:					int br2x=br2*1000;
+    #####:  380:					int index2=hashtable_search(br2x);
+call    0 never executed
+    #####:  381:					if(index2!=0)
+branch  0 never executed
+branch  1 never executed
+        -:  382:					{
+    #####:  383:						cout<<"**************"<<endl<<hashtable[index2].text<<" Verified !"<<endl<<"**************";
+call    0 never executed
+branch  1 never executed
+branch  2 never executed
+call    3 never executed
+branch  4 never executed
+branch  5 never executed
+call    6 never executed
+branch  7 never executed
+branch  8 never executed
+call    9 never executed
+branch 10 never executed
+branch 11 never executed
+call   12 never executed
+branch 13 never executed
+branch 14 never executed
+call   15 never executed
+branch 16 never executed
+branch 17 never executed
+        -:  384:					}
+        -:  385:					else
+        -:  386:					{
+    #####:  387:						cout<<"**************\nNOT Verified !\n**************";
+call    0 never executed
+branch  1 never executed
+branch  2 never executed
+        -:  388:					}
+        -:  389:				}
+        -:  390:			}
+    #####:  391:			while(choice2!=3);
+branch  0 never executed
+branch  1 never executed
+        -:  392:		}
+        -:  393:		
+        4:  394:	}while(choice!=4);
+branch  0 taken 1 (fallthrough)
+branch  1 taken 3
+        3:  395:}	
+        -:  396:
